@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"unicode"
 	"os"
+	"unicode"
 )
 
 var keyReader = bufio.NewReader(os.Stdin)

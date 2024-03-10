@@ -8,7 +8,7 @@ import (
 
 var globalState = struct {
 	restoreTerm func()
-	oldState *term.State
+	oldState    *term.State
 }{
 	nil,
 	nil,
@@ -40,7 +40,7 @@ func exitTerm(err error) {
 	}
 
 	if err != nil {
-		fmt.Println("error: "+err.Error())
+		fmt.Println("error: " + err.Error())
 		globalState.restoreTerm()
 		os.Exit(1)
 	}
