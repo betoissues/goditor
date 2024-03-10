@@ -7,11 +7,15 @@ import (
 )
 
 var globalState = struct {
+	screencols int
+	screenrows int
 	restoreTerm func()
 	oldState    *term.State
 }{
-	nil,
-	nil,
+0,
+0,
+nil,
+nil,
 }
 
 // @TODO: review best way to implement the reader without
@@ -32,6 +36,17 @@ var globalState = struct {
 
 func restoreState() {
 	term.Restore(int(os.Stdin.Fd()), globalState.oldState)
+}
+
+func initTerm() {
+	cols, rows, err := term.GetSize(int(os.Stdin.Fd()))
+
+	if err != nil {
+		exitTerm(err)
+	}
+
+	globalState.screencols = cols
+	globalState.screenrows = rows
 }
 
 func exitTerm(err error) {

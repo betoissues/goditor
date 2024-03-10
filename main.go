@@ -12,6 +12,7 @@ func main() {
 		exitTerm(err)
 	}
 
+	initTerm()
 	globalState.oldState = oldState
 	globalState.restoreTerm = restoreState
 

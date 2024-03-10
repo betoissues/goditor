@@ -15,7 +15,7 @@ func editorRefreshScreen() {
 }
 
 func editorDrawRows() {
-	for y := 0; y < 24; y++ {
+	for y := 0; y < globalState.screenrows; y++ {
 		fmt.Fprint(os.Stdout, "~\r\n")
 	}
 }
