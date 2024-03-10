@@ -35,6 +35,8 @@ func restoreState() {
 }
 
 func exitTerm(err error) {
+	editorRefreshScreen()
+
 	if globalState.restoreTerm != nil {
 		globalState.restoreTerm()
 	}
