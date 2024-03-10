@@ -29,25 +29,27 @@ func (kr *KeyReader) ReadKey() (rune, int, error) {
 	return kr.ReadRune()
 }
 
-func processKeyPress(reader *KeyReader) {
-	char, _, err := reader.ReadKey()
+func ctrlKey(key rune) rune {
+	return key & 0x1f
+}
 
-	if char == 'q' {
-		fmt.Println("closing")
-		exitTerm(nil)
+func processKeyPress(reader *KeyReader) {
+	key, _, err := reader.ReadKey()
+
+	if unicode.IsControl(key) {
+		fmt.Printf("%d\r\n", key)
+	} else {
+		fmt.Printf("%d (%c)\r\n", key, key)
 	}
 
-	if unicode.IsControl(char) {
-		fmt.Printf("%d\r\n", char)
-	} else {
-		fmt.Printf("%d (%c)\r\n", char, char)
+	if key == ctrlKey('q') {
+		fmt.Println("closing")
+		exitTerm(nil)
 	}
 
 	if err != nil {
 		exitTerm(err)
 	}
-
-	fmt.Print(string(char)+"\n")
 }
 
 func restoreState() {
