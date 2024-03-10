@@ -27,7 +27,16 @@ func editorDrawRows() {
 			if len(welcome) > globalState.screencols {
 				welcome = welcome[:globalState.screencols]
 			}
+			padding := (globalState.screencols - len(welcome)) / 2
+			if (padding > 0) {
+				sBuilder.WriteString("~")
+				padding--
+			}
 
+			for padding > 0 {
+				sBuilder.WriteString(" ")
+				padding--
+			}
 			sBuilder.WriteString(welcome)
 		} else {
 			sBuilder.WriteString("~")
