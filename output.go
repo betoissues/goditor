@@ -22,13 +22,13 @@ func editorRefreshScreen() {
 
 func editorDrawRows() {
 	for y := 0; y < globalState.screenrows; y++ {
-		if y == globalState.screenrows / 3 {
+		if y == globalState.screenrows/3 {
 			welcome := "goditor -- version 0.0.1"
 			if len(welcome) > globalState.screencols {
 				welcome = welcome[:globalState.screencols]
 			}
 			padding := (globalState.screencols - len(welcome)) / 2
-			if (padding > 0) {
+			if padding > 0 {
 				sBuilder.WriteString("~")
 				padding--
 			}
