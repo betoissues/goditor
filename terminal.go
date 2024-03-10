@@ -14,6 +14,9 @@ var globalState = struct {
 	nil,
 }
 
+// @TODO: review best way to implement the reader without
+// this mostly useless wrapper
+
 // type KeyReader struct {
 // 	*bufio.Reader
 // }
