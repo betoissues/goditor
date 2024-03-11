@@ -1,20 +1,12 @@
 package main
 
-import (
-	"golang.org/x/term"
-	"os"
+const (
+	GODITOR_VERSION = "0.0.1"
 )
 
 func main() {
-	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
-
-	if err != nil {
-		exitTerm(err)
-	}
-
+	makeRaw()
 	initTerm()
-	globalState.oldState = oldState
-	globalState.restoreTerm = restoreState
 
 	defer exitTerm(nil)
 

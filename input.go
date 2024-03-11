@@ -13,6 +13,19 @@ func ctrlKey(key rune) rune {
 	return key & 0x1f
 }
 
+func editorMoveCursor(key rune) {
+	switch key {
+	case 'w':
+		E.cy--
+	case 'a':
+		E.cx--
+	case 's':
+		E.cy++
+	case 'd':
+		E.cx++
+	}
+}
+
 func processKeyPress() {
 	key, _, err := keyReader.ReadRune()
 
@@ -24,6 +37,8 @@ func processKeyPress() {
 	case ctrlKey('q'):
 		fmt.Println("closing")
 		exitTerm(nil)
+	case 'w', 'a', 's', 'd':
+		editorMoveCursor(key)
 	default:
 		if unicode.IsControl(key) {
 			fmt.Printf("%d\r\n", key)

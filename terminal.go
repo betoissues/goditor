@@ -6,36 +6,30 @@ import (
 	"os"
 )
 
-var globalState = struct {
-	screencols  int
-	screenrows  int
+type EditorConfig struct {
+	cx          int
+	cy          int
+	termCols    int
+	termRows    int
 	restoreTerm func()
 	oldState    *term.State
-}{
-	0,
-	0,
-	nil,
-	nil,
 }
 
-// @TODO: review best way to implement the reader without
-// this mostly useless wrapper
-
-// type KeyReader struct {
-// 	*bufio.Reader
-// }
-
-// func NewKeyReader() *KeyReader {
-// 	return &KeyReader{
-// 		bufio.NewReader(os.Stdin),
-// 	}
-// }
-// func (kr *KeyReader) ReadKey() (rune, int, error) {
-// 	return kr.ReadRune()
-// }
+var E = EditorConfig{}
 
 func restoreState() {
-	term.Restore(int(os.Stdin.Fd()), globalState.oldState)
+	term.Restore(int(os.Stdin.Fd()), E.oldState)
+}
+
+func makeRaw() {
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+
+	if err != nil {
+		exitTerm(err)
+	}
+
+	E.oldState = oldState
+	E.restoreTerm = restoreState
 }
 
 func initTerm() {
@@ -45,20 +39,21 @@ func initTerm() {
 		exitTerm(err)
 	}
 
-	globalState.screencols = cols
-	globalState.screenrows = rows
+	E.termCols = cols
+	E.termRows = rows
 }
 
 func exitTerm(err error) {
 	editorRefreshScreen()
 
-	if globalState.restoreTerm != nil {
-		globalState.restoreTerm()
+	// allows using `exitTerm` if `makeRaw` fails
+	if E.restoreTerm != nil {
+		E.restoreTerm()
 	}
 
 	if err != nil {
 		fmt.Println("error: " + err.Error())
-		globalState.restoreTerm()
+		E.restoreTerm()
 		os.Exit(1)
 	}
 
