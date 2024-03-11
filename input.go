@@ -31,7 +31,9 @@ func editorReadKey() rune {
 		seq := make([]rune, 3)
 
 		// @TODO: without timeout for `ReadRune()`
-		// no assurance this is an escape sequence command
+		// no assurance this is an escape sequence command.
+		// especially for partially sent sequences,
+		// adding a timeout may interfere with the drawing loop.
 		seq[0], keySize, err = keyReader.ReadRune()
 
 		if keySize < 1 {
