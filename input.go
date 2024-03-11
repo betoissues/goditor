@@ -8,6 +8,18 @@ import (
 
 var keyReader = bufio.NewReader(os.Stdin)
 
+var editorKeys = struct {
+	ARROW_LEFT  rune
+	ARROW_RIGHT rune
+	ARROW_UP    rune
+	ARROW_DOWN  rune
+}{
+	ARROW_LEFT:  1000,
+	ARROW_RIGHT: 1001,
+	ARROW_UP:    1002,
+	ARROW_DOWN:  1003,
+}
+
 func ctrlKey(key rune) rune {
 	return key & 0x1f
 }
@@ -23,6 +35,8 @@ func editorReadKey() rune {
 		var keySize int
 		seq := make([]rune, 3)
 
+		// @TODO: without timeout for `ReadRune()`
+		// no assurance this is an escape sequence command
 		seq[0], keySize, err = keyReader.ReadRune()
 
 		if keySize < 1 {
@@ -38,13 +52,13 @@ func editorReadKey() rune {
 		if seq[0] == '[' {
 			switch seq[1] {
 			case 'A':
-				return 'w'
+				return editorKeys.ARROW_UP
 			case 'B':
-				return 's'
+				return editorKeys.ARROW_DOWN
 			case 'C':
-				return 'd'
+				return editorKeys.ARROW_RIGHT
 			case 'D':
-				return 'a'
+				return editorKeys.ARROW_LEFT
 			}
 		}
 
@@ -56,13 +70,13 @@ func editorReadKey() rune {
 
 func editorMoveCursor(key rune) {
 	switch key {
-	case 'w':
+	case editorKeys.ARROW_UP:
 		E.cy--
-	case 'a':
+	case editorKeys.ARROW_LEFT:
 		E.cx--
-	case 's':
+	case editorKeys.ARROW_DOWN:
 		E.cy++
-	case 'd':
+	case editorKeys.ARROW_RIGHT:
 		E.cx++
 	}
 }
@@ -74,7 +88,10 @@ func processKeyPress() {
 	case ctrlKey('q'):
 		fmt.Println("closing")
 		exitTerm(nil)
-	case 'w', 'a', 's', 'd':
+	case editorKeys.ARROW_UP,
+		editorKeys.ARROW_LEFT,
+		editorKeys.ARROW_DOWN,
+		editorKeys.ARROW_RIGHT:
 		editorMoveCursor(key)
 	}
 }
