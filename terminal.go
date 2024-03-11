@@ -44,6 +44,8 @@ func initTerm() {
 }
 
 func exitTerm(err error) {
+	E.cx = 0
+	E.cy = 0
 	editorRefreshScreen()
 
 	// allows using `exitTerm` if `makeRaw` fails
