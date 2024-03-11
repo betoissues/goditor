@@ -4,13 +4,54 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"unicode"
 )
 
 var keyReader = bufio.NewReader(os.Stdin)
 
 func ctrlKey(key rune) rune {
 	return key & 0x1f
+}
+
+func editorReadKey() rune {
+	key, _, err := keyReader.ReadRune()
+
+	if err != nil {
+		exitTerm(err)
+	}
+
+	if key == rune(escSeq) {
+		var keySize int
+		seq := make([]rune, 3)
+
+		seq[0], keySize, err = keyReader.ReadRune()
+
+		if keySize < 1 {
+			return key
+		}
+
+		seq[1], keySize, err = keyReader.ReadRune()
+
+		if keySize < 1 {
+			return key
+		}
+
+		if seq[0] == '[' {
+			switch seq[1] {
+			case 'A':
+				return 'w'
+			case 'B':
+				return 's'
+			case 'C':
+				return 'd'
+			case 'D':
+				return 'a'
+			}
+		}
+
+		return key
+	} else {
+		return key
+	}
 }
 
 func editorMoveCursor(key rune) {
@@ -27,11 +68,7 @@ func editorMoveCursor(key rune) {
 }
 
 func processKeyPress() {
-	key, _, err := keyReader.ReadRune()
-
-	if err != nil {
-		exitTerm(err)
-	}
+	key := editorReadKey()
 
 	switch key {
 	case ctrlKey('q'):
@@ -39,12 +76,5 @@ func processKeyPress() {
 		exitTerm(nil)
 	case 'w', 'a', 's', 'd':
 		editorMoveCursor(key)
-	default:
-		if unicode.IsControl(key) {
-			fmt.Printf("%d\r\n", key)
-		} else {
-			fmt.Printf("%d (%c)\r\n", key, key)
-		}
 	}
-
 }

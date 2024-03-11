@@ -17,6 +17,8 @@ type EditorConfig struct {
 
 var E = EditorConfig{}
 
+var escSeq = '\x1b'
+
 func restoreState() {
 	term.Restore(int(os.Stdin.Fd()), E.oldState)
 }
